@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>种子的显发 · 阅读与生命的因缘</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1c1410;
+    --ink-light: #4a3f35;
+    --paper: #faf6ef;
+    --paper-warm: #f5ede0;
+    --rust: #b05a2a;
+    --rust-light: #d4845a;
+    --sage: #7a8c6e;
+    --sage-light: #a8b89a;
+    --gold: #c49a3c;
+    --gold-light: #e8c878;
+    --blush: #d4967a;
+    --line: rgba(28,20,16,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Serif SC', serif;
+    line-height: 1.9;
+    overflow-x: hidden;
+  }
+
+  /* 纹理背景 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* Cover */
+  .cover {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: 60px 40px 50px;
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .cover-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(176,90,42,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 85% 10%, rgba(122,140,110,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(196,154,60,0.08) 0%, transparent 70%);
+  }
+
+  .cover-deco {
+    position: absolute;
+    top: 0; right: 0;
+    width: 45%;
+    height: 100%;
+    opacity: 0.06;
+    background: repeating-linear-gradient(
+      -45deg,
+      #fff 0px,
+      #fff 1px,
+      transparent 1px,
+      transparent 20px
+    );
+  }
+
+  .cover-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .cover-circle:nth-child(1) { width: 500px; height: 500px; top: -150px; right: -100px; }
+  .cover-circle:nth-child(2) { width: 300px; height: 300px; bottom: 100px; right: 150px; border-color: rgba(196,154,60,0.15); }
+  .cover-circle:nth-child(3) { width: 180px; height: 180px; top: 40%; left: 5%; border-color: rgba(122,140,110,0.2); }
+
+  .cover-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 800px;
+  }
+
+  .cover-label {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+  }
+
+  .cover-title {
+    font-size: clamp(42px, 8vw, 80px);
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 1s 0.5s forwards;
+  }
+
+  .cover-title em {
+    font-style: normal;
+    color: var(--gold-light);
+    display: block;
+  }
+
+  .cover-subtitle {
+    font-size: clamp(15px, 2.5vw, 20px);
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+    margin-top: 16px;
+    margin-bottom: 50px;
+    max-width: 560px;
+    opacity: 0;
+    animation: fadeUp 1s 0.7s forwards;
+  }
+
+  .cover-line {
+    width: 60px;
+    height: 2px;
+    background: var(--rust-light);
+    margin-bottom: 50px;
+    opacity: 0;
+    animation: fadeUp 1s 0.9s forwards;
+  }
+
+  .cover-quote {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+    max-width: 440px;
+    opacity: 0;
+    animation: fadeUp 1s 1.1s forwards;
+  }
+
+  .cover-footer {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    opacity: 0;
+    animation: fadeIn 1s 1.5s forwards;
+  }
+
+  .cover-nav {
+    display: flex;
+    gap: 28px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .cover-scroll {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.2em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* Main content */
+  .main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+  }
+
+  /* Pull quote / opener */
+  .opener {
+    margin-bottom: 80px;
+    padding: 50px 0;
+    border-top: 2px solid var(--rust);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+
+  .opener::before {
+    content: '\201C';
+    font-family: 'Playfair Display', serif;
+    font-size: 120px;
+    color: var(--rust);
+    opacity: 0.15;
+    position: absolute;
+    top: -10px;
+    left: -20px;
+    line-height: 1;
+  }
+
+  .opener p {
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--ink);
+  }
+
+  .opener em {
+    font-style: normal;
+    color: var(--rust);
+    font-weight: 500;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 72px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .section.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .section-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: var(--rust);
+    opacity: 0.2;
+    line-height: 1;
+    font-weight: 400;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: clamp(18px, 2.5vw, 23px);
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  .section-title span {
+    display: block;
+    font-size: 12px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 300;
+    color: var(--rust-light);
+    letter-spacing: 0.3em;
+    margin-bottom: 4px;
+  }
+
+  .section p {
+    font-size: 16px;
+    color: var(--ink-light);
+    margin-bottom: 20px;
+    line-height: 1.95;
+  }
+
+  .section p:last-child { margin-bottom: 0; }
+
+  /* Highlight box */
+  .highlight {
+    background: var(--paper-warm);
+    border-left: 3px solid var(--rust);
+    padding: 24px 28px;
+    margin: 32px 0;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .highlight p {
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 0;
+    font-style: italic;
+  }
+
+  /* Quality grid / Seed types */
+  .qualities {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .quality-card {
+    padding: 24px 20px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  }
+
+  .quality-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(28,20,16,0.08);
+    border-color: var(--rust-light);
+  }
+
+  .quality-icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .quality-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .quality-desc {
+    font-size: 12px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--ink-light);
+    line-height: 1.6;
+  }
+
+  /* Pull quote */
+  .pull-quote {
+    margin: 48px -20px;
+    padding: 40px 40px;
+    background: var(--ink);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pull-quote::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(176,90,42,0.3), transparent 60%);
+  }
+
+  .pull-quote p {
+    font-size: clamp(18px, 2.5vw, 22px);
+    font-weight: 300;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.9);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 0;
+  }
+
+  .pull-quote em {
+    font-style: normal;
+    color: var(--gold-light);
+  }
+
+  /* Special Dark section for Alaya/Emotion transformation */
+  .alaya-section {
+    background: linear-gradient(135deg, #1c1410 0%, #2d2018 100%);
+    color: #fff;
+    padding: 48px 40px;
+    margin: 48px -20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .alaya-section::after {
+    content: '阿赖耶';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 100px;
+    font-weight: 700;
+    font-family: 'Noto Serif SC', serif;
+    color: rgba(255,255,255,0.03);
+    pointer-events: none;
+    letter-spacing: 0.1em;
+  }
+
+  .alaya-section .section-title {
+    color: #fff;
+  }
+
+  .alaya-section .section-title span {
+    color: var(--blush);
+  }
+
+  .alaya-section p {
+    color: rgba(255,255,255,0.7);
+  }
+
+  .alaya-section .section-num {
+    color: var(--blush);
+    opacity: 0.4;
+  }
+
+  .alaya-cards {
+    display: grid;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .alaya-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .alaya-card-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .alaya-card-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 4px;
+    font-family: 'Noto Serif SC', serif;
+  }
+
+  .alaya-card-text {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+  }
+
+  /* Closing */
+  .closing {
+    margin-top: 80px;
+    padding-top: 60px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+
+  .closing-ornament {
+    font-size: 32px;
+    margin-bottom: 28px;
+    display: block;
+    opacity: 0.4;
+  }
+
+  .closing-text {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--ink);
+    max-width: 560px;
+    margin: 0 auto 32px;
+  }
+
+  .closing-text em {
+    font-style: normal;
+    color: var(--rust);
+    font-weight: 500;
+  }
+
+  .closing-sign {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 12px;
+    color: var(--ink-light);
+    letter-spacing: 0.3em;
+    opacity: 0.6;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 48px 0;
+    opacity: 0.3;
+  }
+
+  .divider-line { flex: 1; height: 1px; background: var(--ink); }
+  .divider-dot { width: 4px; height: 4px; background: var(--rust); border-radius: 50%; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .cover { padding: 40px 24px 36px; }
+    .main { padding: 48px 24px 80px; }
+    .pull-quote, .alaya-section { margin: 32px -10px; padding: 32px 24px; }
+    .qualities { grid-template-columns: repeat(2, 1fr); }
+    .opener::before { font-size: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cover -->
+<div class="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-deco"></div>
+  <div class="cover-circle"></div>
+  <div class="cover-circle"></div>
+  <div class="cover-circle"></div>
+
+  <div class="cover-content">
+    <p class="cover-label">阿赖耶识 · 阅读教育 · 潜能唤醒</p>
+    <h1 class="cover-title">
+      种子的显发
+      <em>阅读与生命的因缘</em>
+    </h1>
+    <p class="cover-subtitle">以唯识学视角重审儿童阅读：如何提供匹配的土壤，唤醒孩子内心沉睡的潜能</p>
+    <div class="cover-line"></div>
+    <p class="cover-quote">"一本书进入孩子的内心，会留下某种印记，在未来某个时刻重新显现。"</p>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-nav">
+      <span>心识熏习</span>
+      <span>兴趣土壤</span>
+      <span>情绪转化</span>
+    </div>
+    <div class="cover-scroll">
+      <div class="scroll-line"></div>
+      <span>向下阅读</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Opener -->
+  <div class="opener">
+    <p>一本书进入孩子的内心，会留下什么？它可能唤醒某种原本沉睡的兴趣，改变他看待一件事情的角度，也可能让他第一次看见某种从未体验过的情感。<em>阅读，是向孩子提供成长的因缘。</em></p>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <span class="section-num">一</span>
+      <h2 class="section-title">
+        <span>The Seed Warehouse</span>
+        阿赖耶识：先天携带的种子仓库
+      </h2>
+    </div>
+    <p>借用佛教唯识学中的“阿赖耶识”来理解儿童成长，能够获得一种更深的观察视角。阿赖耶识像一座我们先天携带的种子仓库。每一粒种子，都代表孩子身上潜藏的某种品质或潜能。</p>
+    <p>它们安静地沉睡着，在适当的因缘条件下显现出来，转化为现实中的思想、情绪和行为；而这些现行，又会反过来熏习心识，形成新的种子。它们与周围的环境持续发生作用，在因缘的交织中不断变化。</p>
+    <p>孩子并不是一张等待书写的白纸，也不是一个等待填满的容器。他带着自己的性格倾向和天赋潜能来到这个世界，又在不断接触外部环境的过程中，逐渐形成新的自己。而书籍，正是参与这一过程的重要因缘。</p>
+  </div>
+
+  <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+  <!-- Section 2 -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <span class="section-num">二</span>
+      <h2 class="section-title">
+        <span>The Awakening Moments</span>
+        阅读如何触动沉睡的种子
+      </h2>
+    </div>
+    <p>同一本书，有的孩子读完觉得平淡无奇，有的孩子却会反复翻阅，甚至在很长一段时间里念念不忘。差别可能在于这本书恰好触及了孩子内心某种尚未被充分意识到的经验与倾向。</p>
+    
+    <div class="qualities">
+      <div class="quality-card">
+        <span class="quality-icon">🦁</span>
+        <div class="quality-name">勇敢之芽</div>
+        <div class="quality-desc">胆怯的孩子读到面对恐惧的行动，意识到勇敢并非不会害怕</div>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon">🌌</span>
+        <div class="quality-name">好奇之芽</div>
+        <div class="quality-desc">提问的孩子因科普读物，展开对宇宙与生命的持续探索</div>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon">🪞</span>
+        <div class="quality-name">共情之芽</div>
+        <div class="quality-desc">内向的孩子在故事人物身上，看见了自己的孤独与善良</div>
+      </div>
+    </div>
+
+    <p>这些时刻，阅读已然唤醒了孩子心中沉睡的种子。当孩子对某一本书产生兴趣时，往往意味着内在的某颗种子被触动了——“缘”已经出现。兴趣出现的时候，其实是种子发出的信号，告诉园丁：这里有一颗芽正在破土，请把合适的土壤放过来。</p>
+  </div>
+
+  <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+  <!-- Section 3 -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <span class="section-num">三</span>
+      <h2 class="section-title">
+        <span>Soil and Cultivation</span>
+        书籍即土壤：辨别与引导真兴趣
+      </h2>
+    </div>
+    <p>“橘生淮南则为橘，生于淮北则为枳。”土壤的性质，会影响种子最终长成什么。不同类型的书，就是不同性质的土壤。它们所包含的情感、观念、知识与价值取向，会以不同的方式参与孩子精神世界的形成。</p>
+    
+    <div class="highlight">
+      <p>过于肥沃的土壤，对刚刚破土的芽未必是好事；而一块看起来普通、却恰好匹配当下状态的土地，反而能让种子顺利扎根。对一个刚刚萌发兴趣的孩子来说，一本能够让他主动翻开、愿意读下去的书，有时比一本公认更有价值、却让他望而却步的书更有意义。</p>
+    </div>
+
+    <p>选书如果离开兴趣，就很容易变成园丁按自己的想象在空地上不停浇水；而如果只盯着兴趣、却不懂得辨别与引导，又可能让种子在贫瘠或有毒的土壤里变质。</p>
+    <p>一时的喜欢可能只是短暂的情感刺激，真正有生长力的兴趣，通常带有持续性、深度和方向性。园丁要先把这两种兴趣区分开来，看准了真正在发芽的部分才好栽培。整个过程中，真正需要的是耐心的观察、及时的回应，以及在关键处守住质量的清醒。</p>
+  </div>
+
+  <!-- Pull Quote -->
+  <div class="pull-quote section" id="pq">
+    <p>当孩子对某个领域表现出持续的关注时，园丁就应该敏锐地觉察到<em>这颗兴趣的种子正在萌芽</em>。一份最初的好奇，经过长期的阅读滋养和生活体验，有可能发展为一种持久的兴趣，进而成为陪伴孩子一生的爱好，<em>甚至在未来转化为某种专业能力和职业方向</em>。</p>
+  </div>
+
+  <!-- Section 4: Alaya & Emotional Transformation -->
+  <div class="section alaya-section" id="s4">
+    <div class="section-header">
+      <span class="section-num">四</span>
+      <h2 class="section-title">
+        <span>Mirror and Map</span>
+        麻烦种子的转化为生长的养料
+      </h2>
+    </div>
+    <p>在阿赖耶识的种子仓库里，有善的种子和恶的种子，最棘手的也许是那些看起来麻烦、却又充满能量的种子——像好胜、倔强、易怒、骄傲这样的性格，关键在于它们被什么样的因缘所影响，最终朝哪个方向生长。</p>
+
+    <div class="alaya-cards">
+      <div class="alaya-card">
+        <span class="alaya-card-icon">🪞</span>
+        <div>
+          <div class="alaya-card-title">阅读是一面“镜子”</div>
+          <div class="alaya-card-text">镜子的作用，是让孩子第一次真正“看见”自己的情绪。这种认出本身就很重要，它让情绪从混沌的冲动，变成可以被意识捕捉的对象，孩子因此不再完全被情绪推着走。</div>
+        </div>
+      </div>
+      <div class="alaya-card">
+        <span class="alaya-card-icon">🗺️</span>
+        <div>
+          <div class="alaya-card-title">阅读是一张“地图”</div>
+          <div class="alaya-card-text">地图的作用，则是帮孩子看清情绪的来路与去向。孩子在跟随故事情节的过程中，等于提前走了一遍情绪的可能路径，心里就有了一张简单的地图：原来它从这里来，原来它还可以往那边去。</div>
+        </div>
+      </div>
+    </div>
+
+    <p>教育真正需要做的是帮助孩子认识这些情绪，理解它们因何而起，并学会用更恰当的方式回应它们并加以转化。园丁可以在日常交流中把这面镜子和这张地图，真正接到孩子自己的生命经验上。久而久之，那些原本可能伤人伤己的能量，就有机会转化为真正推动成长的力量。</p>
+  </div>
+
+  <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+  <!-- Section 5 -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <span class="section-num">五</span>
+      <h2 class="section-title">
+        <span>The Quiet Presence</span>
+        园丁的修养：保持耐心与相信
+      </h2>
+    </div>
+    <p>同一本书，不同的孩子会有不同的感受，或许正是因为它触动了孩子内心某种尚未被发现的兴趣与潜能。</p>
+    <p>阅读教育是一场漫长的陪伴，在一个生命早期最关键的潜能分化过程中，轻轻地、持续地提供合适的土壤，种子会按自己的节奏生长。</p>
+    <p>园丁要做的，是保持耐心，守住边界，并相信：当土壤对了，阳光和雨水自然会来。</p>
+  </div>
+
+  <!-- Closing -->
+  <div class="closing section" id="closing">
+    <span class="closing-ornament">✦</span>
+    <p class="closing-text">
+      阅读是向孩子提供成长的因缘。<em>看准了真正在发芽的部分</em>，守住土壤的质量，<em>种子自然会按自己的节奏生长</em>。
+    </p>
+    <p class="closing-sign">· 种子的显发 · 阅读与生命的因缘 ·</p>
+  </div>
+
+</main>
+
+<script>
+  // Intersection Observer 滚动渐入效果
+  const sections = document.querySelectorAll('.section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
